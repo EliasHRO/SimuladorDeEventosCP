@@ -5,4 +5,4 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "simulador-db"
-database_id = "PEGA_AQUI_EL_ID_DE_TU_BASE_D1"
+database_id = "39cd488a-4324-44f3-9023-6283773fb3ed"

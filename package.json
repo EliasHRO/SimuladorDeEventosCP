@@ -1,0 +1,11 @@
+{
+  "name": "simulador-escenario",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.80.0"
+  }
+}

@@ -1,0 +1,12 @@
+name = "simuladordeeventoscp"
+main = "src/index.js"
+compatibility_date = "2024-09-23"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "simulador-db"
+database_id = "PEGA_AQUI_EL_ID_DE_TU_BASE_D1"

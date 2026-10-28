@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel de administración · Simulador de escenario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#dfe3e8;--panel:#eef0f3;--panel2:#fff;--line:#c5cbd4;--text:#18202c;--muted:#556072;--accent:#0b7a85;--accent-ink:#fff;--danger:#c62828;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#151a22;--panel:#1c232d;--panel2:#242d3a;--line:#334052;--text:#e5e9ef;--muted:#93a0b4;--accent:#3cc3cd;--accent-ink:#052528;--danger:#ff5d5d;color-scheme:dark}}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2{font-family:'Barlow Condensed','Arial Narrow',sans-serif;font-weight:700;margin:0;line-height:1.1}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:12px 18px;background:var(--panel);border-bottom:1px solid var(--line)}
+.top h1{font-size:24px;margin-right:auto}
+.chip{font:600 12.5px 'Barlow',sans-serif;padding:3px 9px;border-radius:20px;border:1px solid var(--accent);color:var(--accent)}
+.btn{border:1px solid var(--line);background:var(--panel2);border-radius:6px;padding:7px 12px;cursor:pointer;font-weight:500;line-height:1.1;text-decoration:none;color:inherit;display:inline-block}
+.btn:hover{border-color:var(--accent)}
+.btn.sm{padding:4px 9px;font-size:13px}
+.btn.go{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+main{max-width:1100px;margin:0 auto;padding:18px 16px 50px;display:grid;gap:16px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.box h2{font-size:20px;margin-bottom:10px}
+.row{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.row input[type=number]{width:90px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel2)}
+.chk{display:flex;align-items:center;gap:8px;cursor:pointer}
+.muted{color:var(--muted)}
+.msg{color:var(--accent);font-weight:600;min-height:1.2em;margin:8px 0 0}
+.ucard{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:12px 14px;margin-bottom:10px}
+.ucard header{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.ucard header b{font-size:16px}
+.mail{color:var(--muted);font-size:13.5px}
+.badge{font-size:12px;font-weight:600;padding:2px 9px;border-radius:20px;border:1px solid var(--line)}
+.badge.on{color:#1d8a4a;border-color:#1d8a4a}.badge.off{color:var(--danger);border-color:var(--danger)}.badge.wait{color:#b7791f;border-color:#b7791f}
+.acts{margin-left:auto;display:flex;flex-wrap:wrap;gap:6px}
+.temp{margin:10px 0 0;padding:10px 12px;border:1px dashed var(--accent);border-radius:8px;font-size:14px}
+.temp code{font:600 16px ui-monospace,Consolas,monospace;user-select:all}
+details summary{cursor:pointer;color:var(--accent);font-weight:600;margin-top:8px}
+.perm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:8px 12px 10px;margin:0}
+legend{font:700 15px 'Barlow Condensed',sans-serif;padding:0 4px}
+fieldset label{display:flex;align-items:center;gap:8px;font-size:14px;margin:4px 0}
+fieldset input[type=number]{width:70px;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.empty{color:var(--muted);margin:0}
+.center{max-width:460px;margin:60px auto;text-align:center}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Panel de administración</h1>
+  <span class="chip">Owner</span>
+  <a class="btn sm" href="/" target="_blank" rel="noopener">Abrir el simulador</a>
+  <button class="btn sm" id="logout">Salir</button>
+</header>
+<main id="app">
+  <section class="box">
+    <h2>Registro de usuarios</h2>
+    <div class="row">
+      <label class="chk"><input type="checkbox" id="cfgOpen"> Permitir que nuevas personas se registren</label>
+      <label class="row">Máximo de usuarios activos <input id="cfgMax" type="number" min="0" max="5000" value="10"></label>
+      <button class="btn" id="cfgSave">Guardar</button>
+    </div>
+    <p class="muted" id="cfgInfo" style="margin:8px 0 0"></p>
+    <p class="msg" id="msg" role="status"></p>
+  </section>
+  <section class="box"><h2>Solicitudes pendientes</h2><div id="req"><p class="empty">Cargando…</p></div></section>
+  <section class="box"><h2>Usuarios registrados</h2><div id="users"><p class="empty">Cargando…</p></div></section>
+</main>
+<script>
+(function(){
+'use strict';
+const $ = s => document.querySelector(s);
+const TAB_LABELS = {luces:'Luces', pantallas:'Pantallas', sonido:'Sonido', conexiones:'Cómo conectarlo'};
+const TYPE_LABELS = {par:'PAR LED', movil:'Cabeza móvil spot', wash:'Cabeza móvil wash', contra:'Contraluz (uplight)', barra:'Barra LED', strobe:'Strobe', blinder:'Blinder (hacia el público)', confeti:'Máquina de confeti mini'};
+const CTRL_LABELS = {dim:'Intensidad', color:'Color', strobe:'Strobe', move:'Movimiento (pan, tilt, automático)', presets:'Escenas de ejemplo', blackout:'Blackout'};
+const PERM_BASIC = {tabs:{luces:true, pantallas:true, sonido:true, conexiones:true}, venue:false, patch:true, maxFix:24,
+  types:{par:true, movil:true, wash:false, contra:true, barra:true, strobe:false, blinder:false, confeti:false},
+  ctrl:{dim:true, color:true, strobe:false, move:true, presets:true, blackout:true}, scenes:true, maxScenes:5};
+const PERM_FULL = {tabs:{luces:true, pantallas:true, sonido:true, conexiones:true}, venue:true, patch:true, maxFix:96,
+  types:Object.fromEntries(Object.keys(TYPE_LABELS).map(k => [k, true])),
+  ctrl:{dim:true, color:true, strobe:true, move:true, presets:true, blackout:true}, scenes:true, maxScenes:99};
+const clone = o => JSON.parse(JSON.stringify(o));
+const norm = pm => { const b = clone(PERM_BASIC); pm = pm || {}; return Object.assign(b, pm, {tabs:Object.assign(b.tabs, pm.tabs), types:Object.assign(b.types, pm.types), ctrl:Object.assign(b.ctrl, pm.ctrl)}); };
+async function API(path, method, data){
+  const r = await fetch('/api/' + path, {method:method || 'GET', credentials:'same-origin',
+    headers:{'Content-Type':'application/json', 'X-Requested-With':'simulador'}, body:data ? JSON.stringify(data) : undefined});
+  let d = null; try{ d = await r.json(); }catch(e){}
+  if (!r.ok) throw Object.assign(new Error((d && d.error) || 'No se pudo conectar con el servidor.'), {status:r.status});
+  return d;
+}
+const msg = t => { $('#msg').textContent = t; };
+const fmt = t => t ? new Date(t).toLocaleString('es') : '';
+let state = {config:{open:true, maxUsers:10}, users:[]};
+const openSet = new Set();
+const temps = {};
+
+async function load(){
+  try{ state = await API('admin/state'); render(); }
+  catch(e){ if (e.status === 401 || e.status === 403) denied(); else msg(e.message); }
+}
+function denied(){
+  $('#app').innerHTML = '<div class="center box"><h2>Solo el Owner puede ver este panel</h2><p class="muted">Inicia sesión en el simulador con la cuenta del Owner.</p><a class="btn go" href="/">Ir al simulador</a></div>';
+}
+function render(){
+  const c = state.config, users = state.users.filter(u => u.role !== 'owner');
+  const active = users.filter(u => u.status === 'active').length;
+  if (document.activeElement !== $('#cfgMax')) $('#cfgMax').value = c.maxUsers;
+  $('#cfgOpen').checked = !!c.open;
+  $('#cfgInfo').textContent = `${active} de ${c.maxUsers} usuarios activos. ${c.open ? 'El registro está abierto.' : 'El registro está cerrado.'}`;
+  renderReq(users.filter(u => u.status === 'pending'));
+  renderUsers(users.filter(u => u.status !== 'pending'));
+}
+function head(u, badge){
+  const h = document.createElement('header');
+  h.innerHTML = `<b></b><span class="mail"></span>${badge}<span class="mail when"></span><span class="acts"></span>`;
+  h.querySelector('b').textContent = u.name; h.querySelector('.mail').textContent = u.email; h.querySelector('.when').textContent = fmt(u.createdAt);
+  return h;
+}
+function act(label, cls, fn){ const b = document.createElement('button'); b.className = 'btn sm ' + (cls || ''); b.textContent = label; b.onclick = fn; return b; }
+function renderReq(list){
+  const box = $('#req'); box.innerHTML = '';
+  if (!list.length){ box.innerHTML = '<p class="empty">No hay solicitudes pendientes.</p>'; return; }
+  list.forEach(u => {
+    const card = document.createElement('div'); card.className = 'ucard';
+    const h = head(u, '<span class="badge wait">Pendiente</span>'); card.appendChild(h);
+    if (u.message){ const p = document.createElement('p'); p.className = 'muted'; p.style.margin = '8px 0 0'; p.textContent = '“' + u.message + '”'; card.appendChild(p); }
+    const a = h.querySelector('.acts');
+    a.append(act('Aprobar', 'go', async () => { try{ await API(`admin/users/${u.id}/approve`, 'POST', {}); openSet.add(u.id); msg('Usuario aprobado con acceso básico. Ajusta sus permisos abajo.'); load(); }catch(e){ msg(e.message); } }));
+    a.append(act('Rechazar', 'danger', async e => { const b = e.currentTarget; if (!b.dataset.sure){ b.dataset.sure = 1; b.textContent = 'Confirmar rechazo'; return; } try{ await API(`admin/users/${u.id}`, 'DELETE'); msg('Solicitud rechazada.'); load(); }catch(err){ msg(err.message); } }));
+    box.appendChild(card);
+  });
+}
+function renderUsers(list){
+  const box = $('#users');
+  box.querySelectorAll('details[open]').forEach(d => openSet.add(+d.dataset.uid));
+  box.innerHTML = '';
+  if (!list.length){ box.innerHTML = '<p class="empty">Todavía no hay usuarios aprobados.</p>'; return; }
+  list.forEach(u => {
+    const on = u.status === 'active', pm = norm(u.perms);
+    const card = document.createElement('div'); card.className = 'ucard';
+    const h = head(u, `<span class="badge ${on ? 'on' : 'off'}">${on ? 'Activo' : 'Suspendido'}</span>`); card.appendChild(h);
+    const a = h.querySelector('.acts');
+    a.append(act(on ? 'Suspender' : 'Activar', '', async () => { try{ await API(`admin/users/${u.id}/status`, 'POST', {status:on ? 'blocked' : 'active'}); msg(on ? 'Usuario suspendido. Su sesión se cerró.' : 'Usuario activado.'); load(); }catch(e){ msg(e.message); } }));
+    a.append(act('Restablecer contraseña', '', async () => { try{ const r = await API(`admin/users/${u.id}/reset`, 'POST', {}); temps[u.id] = r.tempPassword; msg('Contraseña temporal creada. Compártela con la persona; deberá cambiarla al entrar.'); render(); }catch(e){ msg(e.message); } }));
+    a.append(act('Eliminar', 'danger', async e => { const b = e.currentTarget; if (!b.dataset.sure){ b.dataset.sure = 1; b.textContent = 'Confirmar eliminación'; msg('Pulsa de nuevo para eliminar. La persona tendrá que registrarse otra vez.'); return; } try{ await API(`admin/users/${u.id}`, 'DELETE'); msg('Usuario eliminado.'); load(); }catch(err){ msg(err.message); } }));
+    if (temps[u.id]){ const t = document.createElement('p'); t.className = 'temp'; t.innerHTML = 'Contraseña temporal (se muestra solo esta vez): <code></code>'; t.querySelector('code').textContent = temps[u.id]; card.appendChild(t); delete temps[u.id]; }
+    const chk = (g, k, l, v) => `<label><input type="checkbox" data-g="${g}" data-k="${k}" ${v ? 'checked' : ''}> ${l}</label>`;
+    const det = document.createElement('details'); det.dataset.uid = u.id; if (openSet.has(u.id)) det.open = true;
+    det.innerHTML = `<summary>Permisos</summary><div class="perm-grid">
+      <fieldset><legend>Módulos</legend>${Object.entries(TAB_LABELS).map(([k, l]) => chk('tabs', k, l, pm.tabs[k])).join('')}${chk('root', 'venue', 'Cambiar de escenario', pm.venue)}</fieldset>
+      <fieldset><legend>Equipos de iluminación</legend>${chk('root', 'patch', 'Agregar, quitar y mover luces', pm.patch)}
+        <label>Máximo de luces <input type="number" min="0" max="96" data-n="maxFix" value="${pm.maxFix}"></label>
+        ${Object.entries(TYPE_LABELS).map(([k, l]) => chk('types', k, l, pm.types[k])).join('')}</fieldset>
+      <fieldset><legend>Qué puede configurar</legend>${Object.entries(CTRL_LABELS).map(([k, l]) => chk('ctrl', k, l, pm.ctrl[k])).join('')}</fieldset>
+      <fieldset><legend>Escenas</legend>${chk('root', 'scenes', 'Guardar y reproducir escenas', pm.scenes)}
+        <label>Máximo de escenas <input type="number" min="0" max="99" data-n="maxScenes" value="${pm.maxScenes}"></label></fieldset>
+    </div><div class="foot"></div>`;
+    const fill = src => { det.querySelectorAll('input[data-g]').forEach(i => { const g = i.dataset.g, k = i.dataset.k; i.checked = !!(g === 'root' ? src[k] : src[g][k]); }); det.querySelectorAll('input[data-n]').forEach(i => { i.value = src[i.dataset.n]; }); };
+    const foot = det.querySelector('.foot');
+    foot.append(act('Guardar permisos', 'go', async () => {
+      const np = clone(PERM_BASIC);
+      det.querySelectorAll('input[data-g]').forEach(i => { const g = i.dataset.g, k = i.dataset.k; if (g === 'root') np[k] = i.checked; else np[g][k] = i.checked; });
+      det.querySelectorAll('input[data-n]').forEach(i => { np[i.dataset.n] = Math.max(0, parseInt(i.value, 10) || 0); });
+      try{ await API(`admin/users/${u.id}/perms`, 'PUT', {perms:np}); openSet.add(u.id); msg('Permisos guardados. Se aplican en menos de 30 segundos, aunque la persona tenga el simulador abierto.'); load(); }catch(e){ msg(e.message); }
+    }));
+    foot.append(act('Llenar con acceso total', '', () => fill(PERM_FULL)), act('Llenar con acceso básico', '', () => fill(PERM_BASIC)));
+    card.appendChild(det); box.appendChild(card);
+  });
+}
+$('#cfgSave').onclick = async () => {
+  try{ state.config = await API('admin/config', 'PUT', {open:$('#cfgOpen').checked, maxUsers:parseInt($('#cfgMax').value, 10) || 0}); msg('Configuración guardada.'); render(); }
+  catch(e){ msg(e.message); }
+};
+$('#logout').onclick = async () => { try{ await API('logout', 'POST', {}); }catch(e){} location.href = '/'; };
+load();
+setInterval(() => { if (!document.querySelector('#app input:focus')) load(); }, 30000);
+})();
+</script>
+</body>
+</html>

@@ -1,8 +1,0 @@
-name = "simulador-escenario"
-compatibility_date = "2024-09-23"
-pages_build_output_dir = "public"
-
-[[d1_databases]]
-binding = "DB"
-database_name = "simulador-db"
-database_id = "39cd488a-4324-44f3-9023-6283773fb3ed"
